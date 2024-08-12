@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { transformSync } from '@swc/core';
+import { runInNewContext } from 'vm';
 
 @Injectable()
 export class AppService {
@@ -27,19 +28,30 @@ export class AppService {
     const tempFilePath = await this.createTempFile(code);
 
     try {
-      return new Promise((resolve) => {
-        exec(`npx ts-node ${tempFilePath}`, (e, stdout, stdErr) => {
-          if (e) {
-            resolve({ stdErr });
-          } else {
-            resolve({ stdout });
-          }
-        });
+      const file = await fs.readFile(tempFilePath, 'utf-8');
+
+      const { code } = transformSync(file, {
+        jsc: { parser: { syntax: 'typescript' }, target: 'es2021' },
+        module: { type: 'commonjs' },
       });
+
+      let output = '';
+
+      const context = {
+        console: {
+          log: (...args: any) => {
+            output += args.join(' ') + '\n';
+          },
+        },
+      };
+
+      runInNewContext(code, context);
+
+      return { stdout: output };
     } catch (e) {
       console.error(e);
     } finally {
-      // await this.removeTempFile(tempFilePath);
+      await this.removeTempFile(tempFilePath);
     }
   }
 }
