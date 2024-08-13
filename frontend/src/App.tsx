@@ -35,6 +35,8 @@ function App() {
       } else {
         console.error(e);
       }
+    } finally {
+      localStorage.setItem('code', code);
     }
   }, [code]);
 
@@ -88,6 +90,7 @@ function App() {
           defaultValue={code}
           theme={isDarkMode ? 'vs-dark' : 'light'}
           onChange={handleEditorChange}
+          value={localStorage.getItem('code') || code}
         />
         <div className="button-group">
           <button onClick={handleRunTypescript}>Run (Ctrl+S)</button>
