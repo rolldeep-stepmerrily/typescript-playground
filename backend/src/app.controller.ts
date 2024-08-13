@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { RunTypescriptDto } from './app.dto';
 
@@ -9,5 +9,15 @@ export class AppController {
   @Post('run')
   async runTypescript(@Body() { code }: RunTypescriptDto) {
     return this.appService.runTypescript(code);
+  }
+
+  @Post('typecheck-run')
+  async typecheckAndRunTypescript(@Body() { code }: RunTypescriptDto) {
+    return this.appService.typecheckAndRunTypescript(code);
+  }
+
+  @Delete()
+  async deleteTempFile(@Query('tempFilePath') filePath: string) {
+    return this.appService.deleteTempFile(filePath);
   }
 }

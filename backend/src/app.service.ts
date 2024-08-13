@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { transformSync } from '@swc/core';
 import { runInNewContext } from 'vm';
+import { exec } from 'child_process';
 
 @Injectable()
 export class AppService {
@@ -16,7 +17,7 @@ export class AppService {
     return filePath;
   }
 
-  async removeTempFile(filePath: string) {
+  async deleteTempFile(filePath: string) {
     try {
       await fs.unlink(filePath);
     } catch (e) {
@@ -51,7 +52,26 @@ export class AppService {
     } catch (e) {
       console.error(e);
     } finally {
-      await this.removeTempFile(tempFilePath);
+      await this.deleteTempFile(tempFilePath);
+    }
+  }
+
+  async typecheckAndRunTypescript(code: string) {
+    const tempFilePath = await this.createTempFile(code);
+
+    try {
+      return new Promise((resolve) => {
+        exec(`npx ts-node ${tempFilePath}`, (e, stdout, stderr) => {
+          if (e) {
+            resolve({ stdout: stderr, tempFilePath });
+          } else {
+            resolve({ stdout, tempFilePath });
+          }
+        });
+      });
+      return await this.runTypescript(code);
+    } catch (e) {
+      console.error(e);
     }
   }
 }

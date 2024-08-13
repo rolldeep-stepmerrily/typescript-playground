@@ -1,3 +1,27 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --button-bg: #4caf50;
+  --button-text: white;
+  --output-bg: #f9f9f9;
+  --output-border: #ddd;
+}
+
+.dark-mode {
+  --bg-color: #1e1e1e;
+  --text-color: #ffffff;
+  --button-bg: #5c6bc0;
+  --button-text: white;
+  --output-bg: #2d2d2d;
+  --output-border: #555;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
 .App {
   text-align: center;
   padding: 20px;
@@ -5,32 +29,60 @@
 
 .editor {
   margin-bottom: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--output-border);
 }
 
 .output {
   margin-top: 20px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 1px solid var(--output-border);
   padding: 10px;
   border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: var(--output-bg);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4caf50;
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #45a049;
+  filter: brightness(1.1);
 }
 
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+section {
+  margin-bottom: 20px;
+  border: 1px solid var(--output-border);
 }
